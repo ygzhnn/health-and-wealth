@@ -1,0 +1,191 @@
+/* src/App.css */
+
+/* Genel gövde */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: url('/images/urban-image.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #1a1a1a;
+}
+
+/* Genel kutulama */
+* {
+  box-sizing: border-box;
+}
+
+.app-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 0 20px;
+  flex-direction: column;
+}
+
+/* Giriş/Kayıt üst bar */
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 40px;
+  z-index: 10;
+  background: transparent;
+  height: 72px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #3a5a7a;
+  font-size: 1.4rem;
+  font-weight: bold;
+  line-height: 1; /* Fazladan boşluk olmasın */
+}
+
+.logo img {
+  height: 112px; /* BURAYI artırabilirsin */
+  width: auto;
+  display: block;
+}
+
+.logo-container {
+  background-color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+}
+
+/* Giriş butonları */
+.auth-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.auth-btn {
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background-color: #3a5a7a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.auth-btn.outlined {
+  background-color: transparent;
+  color: #2e86de;
+  border: 1px solid #2e86de;
+}
+
+.auth-btn:hover {
+  background-color: #1c65b3;
+}
+
+/* İçerik */
+.home-container {
+  max-width: 800px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+}
+
+.hero {
+  margin: 0;
+} 
+
+.hero-title {
+  font-size: 2.8rem;
+  color: #3a5a7a;
+  margin: 0;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 0;
+}
+
+.analysis-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.option-cards {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Kartlar */
+.card {
+  background: #b3c3d385;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 240px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.card h3 {
+  margin: 0 0 8px;
+  color: #2c3e50;
+  font-size: 1.05rem;
+}
+
+.card p {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+}
+
+/* Ek bilgi kutusu */
+.extra-section {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.info-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 14px 18px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.4;
+}

@@ -17,8 +17,8 @@ app = FastAPI()
 # Add CORS middleware
 origins = [
     "http://localhost",      # Replace with your frontend URL(s) during development
-    "http://localhost:3000"
-    "http://localhost:5173/", # Example for a React app running on port 3000
+    "http://localhost:3000",
+    "http://localhost:5173",
     # Add your production frontend URL(s) here
 ]
 
@@ -42,8 +42,9 @@ async def analyze_office(file: UploadFile = File(...)):
         image = Image.open(io.BytesIO(image_data))
 
         # Perform both analyses
-        indoor_analysis = analyze_indoor_space_with_gemini(image)
         face_analysis = analyze_faces(image)
+        indoor_analysis = analyze_indoor_space_with_gemini(image)
+        
 
         # Parse both JSON strings
         indoor_results = json.loads(indoor_analysis)
@@ -139,4 +140,4 @@ async def analyze_outdoor(file: UploadFile = File(...)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

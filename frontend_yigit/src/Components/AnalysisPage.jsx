@@ -1,0 +1,131 @@
+import { useState } from 'react';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Button,
+  CircularProgress,
+  Alert,
+} from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
+function AnalysisPage({ title, description, onAnalyze }) {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [results, setResults] = useState(null);
+
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreview(URL.createObjectURL(file));
+      setError(null);
+      setResults(null);
+    }
+  };
+
+  const handleAnalyze = async () => {
+    if (!selectedFile) {
+      setError('Lütfen bir görsel seçin');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      const result = await onAnalyze(formData);
+      setResults(result);
+    } catch (err) {
+      setError('Analiz sırasında bir hata oluştu: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box sx={{ py: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        {title}
+      </Typography>
+      <Typography variant="body1" color="text.secondary" paragraph>
+        {description}
+      </Typography>
+
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
+            }}
+          >
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={<CloudUploadIcon />}
+            >
+              Görsel Seç
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleFileSelect}
+              />
+            </Button>
+
+            {preview && (
+              <Box
+                component="img"
+                src={preview}
+                alt="Preview"
+                sx={{
+                  maxWidth: '100%',
+                  maxHeight: 300,
+                  objectFit: 'contain',
+                }}
+              />
+            )}
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAnalyze}
+              disabled={!selectedFile || loading}
+            >
+              {loading ? <CircularProgress size={24} /> : 'Analizi Başlat'}
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      {results && (
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Analiz Sonuçları
+            </Typography>
+            <pre style={{ whiteSpace: 'pre-wrap' }}>
+              {JSON.stringify(results, null, 2)}
+            </pre>
+          </CardContent>
+        </Card>
+      )}
+    </Box>
+  );
+}
+
+export default AnalysisPage; 

@@ -1,11 +1,24 @@
+import AnalysisPage from '../Components/AnalysisPage';
+import axios from 'axios';
+
 function IndoorAnalysisPage() {
-    return (
-      <div className="page-container">
-        <h2>İç Alan Analizi</h2>
-        <p>Bu sayfa, iç alan analizleri için özel olarak hazırlanmıştır.</p>
-      </div>
-    );
-  }
-  
-  export default IndoorAnalysisPage;
+  const handleAnalyze = async (formData) => {
+    const response = await axios.post('http://localhost:8001/analyze/office/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  };
+
+  return (
+    <AnalysisPage
+      title="İç Alan Analizi"
+      description="Kapalı ortamlarda ruhsal etkileri değerlendirin. Bu analiz, ofis veya ev ortamınızın ruh halinize etkisini ölçer."
+      onAnalyze={handleAnalyze}
+    />
+  );
+}
+
+export default IndoorAnalysisPage;
   

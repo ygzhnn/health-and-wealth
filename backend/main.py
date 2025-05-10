@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # Import your analysis functions
 # Make sure the paths are correct based on your project structure
 from model.indoor_analysis import analyze_indoor_space_with_gemini
-from model.outdoor_analysis import analyze_environment_with_gemini
+from model.outdoor_analysis import analyze_environment_with_gemini, parse_gemini_response
 from model.facerecog import analyze_faces
 
 
@@ -129,8 +129,15 @@ async def analyze_outdoor(file: UploadFile = File(...)):
         # Call the outdoor analysis model
         analysis_results_json = analyze_environment_with_gemini(image)
 
-        # Parse the JSON string to dict
-        analysis_results = json.loads(analysis_results_json)
+        # Parse the JSON response using the parse_gemini_response function
+        analysis_results = parse_gemini_response(analysis_results_json)
+        
+        if analysis_results is None:
+            return {
+                "error": "Failed to parse analysis results",
+                "analysis_results": None
+            }
+
         return analysis_results
     except Exception as e:
         return {

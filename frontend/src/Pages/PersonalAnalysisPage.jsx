@@ -16,6 +16,7 @@ function PersonalAnalysisPage() {
       title="Kişisel Analiz"
       description="Kişisel alanınızın ruh halinize etkisini ölçün. Bu analiz, kişisel yaşam alanınızın duygusal etkisini değerlendirir."
       onAnalyze={handleAnalyze}
+      isPersonalAnalysis={true}
     />
   );
 }

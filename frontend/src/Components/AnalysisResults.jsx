@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, Typography, Grid, LinearProgress } from '@mui/material';
 
-function AnalysisResults({ results }) {
+function AnalysisResults({ results, isPersonalAnalysis = false }) {
   if (!results) return null;
 
   // Extract scores for display
@@ -39,39 +39,41 @@ function AnalysisResults({ results }) {
           </Card>
         </Grid>
 
-        {/* Wellbeing Score Card */}
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Genel İyilik Hali Skoru
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="h3" align="center" sx={{ color: getScoreColor(wellbeingScore) }}>
-                  {wellbeingScore}
+        {/* Wellbeing Score Card - Only show for non-personal analysis */}
+        {!isPersonalAnalysis && (
+          <Grid item xs={12}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Genel İyilik Hali Skoru
                 </Typography>
-                <LinearProgress
-                  variant="determinate"
-                  value={wellbeingScore}
-                  sx={{
-                    height: 10,
-                    borderRadius: 5,
-                    backgroundColor: '#e0e0e0',
-                    '& .MuiLinearProgress-bar': {
-                      backgroundColor: getScoreColor(wellbeingScore),
-                    },
-                  }}
-                />
-                <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="caption" color="text.secondary">Düşük</Typography>
-                  <Typography variant="caption" color="text.secondary">Orta</Typography>
-                  <Typography variant="caption" color="text.secondary">İyi</Typography>
-                  <Typography variant="caption" color="text.secondary">Mükemmel</Typography>
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="h3" align="center" sx={{ color: getScoreColor(wellbeingScore) }}>
+                    {wellbeingScore}
+                  </Typography>
+                  <LinearProgress
+                    variant="determinate"
+                    value={wellbeingScore}
+                    sx={{
+                      height: 10,
+                      borderRadius: 5,
+                      backgroundColor: '#e0e0e0',
+                      '& .MuiLinearProgress-bar': {
+                        backgroundColor: getScoreColor(wellbeingScore),
+                      },
+                    }}
+                  />
+                  <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="caption" color="text.secondary">Düşük</Typography>
+                    <Typography variant="caption" color="text.secondary">Orta</Typography>
+                    <Typography variant="caption" color="text.secondary">İyi</Typography>
+                    <Typography variant="caption" color="text.secondary">Mükemmel</Typography>
+                  </Box>
                 </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        )}
 
         {/* Detailed Scores */}
         <Grid item xs={12}>
@@ -108,8 +110,8 @@ function AnalysisResults({ results }) {
           </Card>
         </Grid>
 
-        {/* Detected Features */}
-        {results.detected_features && (
+        {/* Detected Features - Only show for non-personal analysis */}
+        {!isPersonalAnalysis && results.detected_features && (
           <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
@@ -130,7 +132,7 @@ function AnalysisResults({ results }) {
 
         {/* Improvement Suggestions */}
         {results.improvement_suggestions && (
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={isPersonalAnalysis ? 12 : 6}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>

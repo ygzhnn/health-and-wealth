@@ -11,7 +11,7 @@ import {
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AnalysisResults from './AnalysisResults';
 
-function AnalysisPage({ title, description, onAnalyze }) {
+function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = false }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -113,7 +113,7 @@ function AnalysisPage({ title, description, onAnalyze }) {
         </Alert>
       )}
 
-      {results && <AnalysisResults results={results} />}
+      {results && <AnalysisResults results={results} isPersonalAnalysis={isPersonalAnalysis} />}
     </Box>
   );
 }

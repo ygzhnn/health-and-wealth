@@ -27,7 +27,7 @@ def analyze_environment_with_gemini(image):
 
     # Prepare the analysis prompt
     prompt = """
-    Analyze this urban/environmental image and evaluate the following factors on a 0-100 scale:
+    Analyze this outdoor/urban environment image and evaluate the following factors on a 0-100 scale:
 
     1. Green Space: Trees, plants, parks, natural areas, etc.
     2. Traffic: Vehicles, roads, traffic density, etc.
@@ -43,19 +43,20 @@ def analyze_environment_with_gemini(image):
         "water_features": 0-100 score,
         "urbanization": 0-100 score,
         "detected_features": ["feature1", "feature2", ...],
-        "wellbeing_assessment": "Brief evaluation of this area's impact on mental health and emotional wellbeing",
-        "improvement_suggestions": ["suggestion1", "suggestion2", ...],
-        "wellbeing_score": calculated overall score based on the factors above
+        "wellbeing_assessment": "Detailed evaluation of how this outdoor environment affects mental health and emotional wellbeing. Consider factors like natural elements, urban features, and their combined impact.",
+        "improvement_suggestions": [
+            "Specific suggestion 1 for improving the environment's impact on wellbeing",
+            "Specific suggestion 2 for enhancing the space",
+            "Specific suggestion 3 for optimizing the area"
+        ]
     }
 
-    For the wellbeing_score, consider:
-    - Green space has positive impact (weight: 0.3)
-    - Water features have positive impact (weight: 0.2)
-    - Traffic has negative impact (weight: -0.2)
-    - Crowd has negative impact (weight: -0.15)
-    - Urbanization has mixed impact (weight: -0.15)
-
-    Calculate the wellbeing_score as a weighted average of these factors, normalized to 0-100.
+    Important guidelines:
+    1. For wellbeing_assessment: Provide a detailed analysis of how the environment affects mental wellbeing
+    2. For improvement_suggestions: List 3-5 specific, actionable suggestions
+    3. For detected_features: List all notable environmental features
+    4. All scores should be between 0-100
+    5. Be specific and detailed in your analysis
 
     Return only the JSON output, without any additional commentary.
     """
@@ -128,7 +129,7 @@ def main():
 
         # Print scores
         env_scores = {k: v for k, v in env_results.items()
-                     if isinstance(v, (int, float)) and k not in ["detected_features", "wellbeing_assessment", "improvement_suggestions", "wellbeing_score"]}
+                     if isinstance(v, (int, float)) and k not in ["detected_features", "wellbeing_assessment", "improvement_suggestions"]}
 
         print("\nFactor Scores (0-100):")
         for category, score in env_scores.items():
@@ -144,11 +145,6 @@ def main():
             print("\nImprovement Suggestions:")
             for suggestion in env_results["improvement_suggestions"]:
                 print(f"- {suggestion}")
-
-        # Print wellbeing score
-        if "wellbeing_score" in env_results:
-            print("\nWellbeing Score:")
-            print(f"{env_results['wellbeing_score']}/100")
 
         # Save results
         print("\nSaving results in JSON format...")

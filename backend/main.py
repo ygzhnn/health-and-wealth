@@ -138,12 +138,58 @@ async def analyze_outdoor(file: UploadFile = File(...)):
                 "analysis_results": None
             }
 
+        # Calculate wellbeing score if not present
+        if "wellbeing_score" not in analysis_results:
+            scores = {k: v for k, v in analysis_results.items() 
+                     if isinstance(v, (int, float)) and k not in ["wellbeing_score"]}
+            analysis_results["wellbeing_score"] = calculate_outdoor_wellbeing_score(scores)
+
+        # Ensure all required fields are present
+        required_fields = {
+            "wellbeing_assessment": "Analysis of the outdoor environment's impact on wellbeing",
+            "improvement_suggestions": ["Consider adding more green spaces", "Reduce traffic density"],
+            "detected_features": ["Natural elements", "Urban features"]
+        }
+
+        for field, default_value in required_fields.items():
+            if field not in analysis_results or not analysis_results[field]:
+                analysis_results[field] = default_value
+
         return analysis_results
     except Exception as e:
         return {
             "error": f"Error in outdoor analysis: {str(e)}",
             "analysis_results": None
         }
+
+def calculate_outdoor_wellbeing_score(scores):
+    """Calculate overall wellbeing score based on outdoor space factors."""
+    if not scores:
+        return 50  # Default neutral score
+
+    # Define impact factors for each parameter
+    impact_factors = {
+        'green_space': 0.3,      # Positive impact
+        'water_features': 0.2,   # Positive impact
+        'traffic': -0.2,         # Negative impact
+        'crowd': -0.15,          # Negative impact
+        'urbanization': -0.15    # Mixed impact
+    }
+
+    # Calculate base wellbeing score (0-100)
+    wellbeing_score = 50  # Neutral starting point
+
+    # Apply each factor
+    for key, factor in impact_factors.items():
+        if key in scores:
+            # Normalize the score (0-100 to -1 to 1 range) before applying factor
+            normalized_score = (scores[key] - 50) / 50
+            wellbeing_score += normalized_score * factor * 25
+
+    # Ensure score stays within bounds
+    wellbeing_score = max(0, min(100, round(wellbeing_score, 1)))
+
+    return wellbeing_score
 
 if __name__ == "__main__":
     import uvicorn

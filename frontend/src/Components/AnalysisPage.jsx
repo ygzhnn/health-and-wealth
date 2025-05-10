@@ -9,8 +9,9 @@ import {
   Alert,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import AnalysisResults from './AnalysisResults';
 
-function AnalysisPage({ title, description, onAnalyze }) {
+function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = false }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,7 @@ function AnalysisPage({ title, description, onAnalyze }) {
 
   const handleAnalyze = async () => {
     if (!selectedFile) {
-      setError('Lütfen bir görsel seçin');
+      setError('Please select an image');
       return;
     }
 
@@ -42,7 +43,7 @@ function AnalysisPage({ title, description, onAnalyze }) {
       const result = await onAnalyze(formData);
       setResults(result);
     } catch (err) {
-      setError('Analiz sırasında bir hata oluştu: ' + err.message);
+      setError('An error occurred during analysis: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -72,7 +73,7 @@ function AnalysisPage({ title, description, onAnalyze }) {
               component="label"
               startIcon={<CloudUploadIcon />}
             >
-              Görsel Seç
+              Select Image
               <input
                 type="file"
                 hidden
@@ -100,7 +101,7 @@ function AnalysisPage({ title, description, onAnalyze }) {
               onClick={handleAnalyze}
               disabled={!selectedFile || loading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Analizi Başlat'}
+              {loading ? <CircularProgress size={24} /> : 'Start Analysis'}
             </Button>
           </Box>
         </CardContent>
@@ -112,18 +113,7 @@ function AnalysisPage({ title, description, onAnalyze }) {
         </Alert>
       )}
 
-      {results && (
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Analiz Sonuçları
-            </Typography>
-            <pre style={{ whiteSpace: 'pre-wrap' }}>
-              {JSON.stringify(results, null, 2)}
-            </pre>
-          </CardContent>
-        </Card>
-      )}
+      {results && <AnalysisResults results={results} isPersonalAnalysis={isPersonalAnalysis} />}
     </Box>
   );
 }

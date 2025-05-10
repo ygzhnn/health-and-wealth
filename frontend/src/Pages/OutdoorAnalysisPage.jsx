@@ -13,9 +13,10 @@ function OutdoorAnalysisPage() {
 
   return (
     <AnalysisPage
-      title="Dış Alan Analizi"
-      description="Açık alanların duygu durumuna etkisini analiz edin. Bu analiz, doğal ve yapay çevrenin ruh halinize etkisini ölçer."
+      title="Outdoor Space Analysis"
+      description="Analyze the impact of outdoor spaces on emotional well-being. This analysis evaluates how natural and built environments affect your mood and mental state."
       onAnalyze={handleAnalyze}
+      isPersonalAnalysis={true}
     />
   );
 }

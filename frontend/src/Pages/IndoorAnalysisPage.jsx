@@ -13,9 +13,10 @@ function IndoorAnalysisPage() {
 
   return (
     <AnalysisPage
-      title="İç Alan Analizi"
-      description="Kapalı ortamlarda ruhsal etkileri değerlendirin. Bu analiz, ofis veya ev ortamınızın ruh halinize etkisini ölçer."
+      title="Indoor Space Analysis"
+      description="Evaluate the emotional impact of indoor environments. This analysis measures how your office or home environment affects your emotional well-being."
       onAnalyze={handleAnalyze}
+      isPersonalAnalysis={true}
     />
   );
 }

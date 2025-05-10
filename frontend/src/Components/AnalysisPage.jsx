@@ -7,8 +7,105 @@ import {
   Button,
   CircularProgress,
   Alert,
+  Chip,
+  LinearProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TableContainer,
+  Paper,
+  Divider,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+
+const ENV_KEYS = [
+  'natural_light',
+  'clutter',
+  'ergonomics',
+  'plants',
+  'color_scheme',
+  'personalization',
+  'noise_potential',
+  'air_quality',
+];
+
+function renderScoreBar(label, value, max = 100, color = 'primary') {
+  return (
+    <Box sx={{ mb: 2 }}>
+      <Typography variant="subtitle2" sx={{ mb: 0.5 }}>{label}</Typography>
+      <LinearProgress
+        variant="determinate"
+        value={Math.max(0, Math.min((value / max) * 100, 100))}
+        color={color}
+        sx={{ height: 12, borderRadius: 6, background: '#e3f2fd' }}
+      />
+      <Typography variant="caption" sx={{ ml: 1 }}>{value}</Typography>
+    </Box>
+  );
+}
+
+function renderEnvRadarChart(env) {
+  if (!env) return null;
+  const data = ENV_KEYS.filter(key => env[key] !== undefined).map(key => ({
+    name: key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+    value: env[key],
+  }));
+  if (data.length === 0) return null;
+  return (
+    <Box sx={{ width: '100%', height: 350, mb: 3 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+          <PolarGrid stroke="#e3f2fd" />
+          <PolarAngleAxis dataKey="name" tick={{ fontSize: 13 }} />
+          <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} />
+          <Radar name="Skor" dataKey="value" stroke="#6bb6ff" fill="#6bb6ff" fillOpacity={0.5} />
+          <Tooltip formatter={(v) => `${v}%`} />
+        </RadarChart>
+      </ResponsiveContainer>
+    </Box>
+  );
+}
+
+function beautifyKey(key) {
+  return key
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function renderResult(result) {
+  if (!result) return null;
+  // Chart verileri (ENV_KEYS) her analizde gösterilsin
+  const chartData = ENV_KEYS.filter(key => result[key] !== undefined).map(key => ({
+    name: key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+    value: result[key],
+    rawKey: key,
+  }));
+  // Tabloya sadece chartta olmayan anahtarlar gelsin
+  const tableEntries = Object.entries(result).filter(([key]) => !ENV_KEYS.includes(key));
+
+  return (
+    <Box>
+      {renderEnvRadarChart(result)}
+      {tableEntries.length > 0 && (
+        <TableContainer component={Paper} sx={{ mb: 2 }}>
+          <Table size="small">
+            <TableBody>
+              {tableEntries.map(([key, value]) => (
+                <TableRow key={key}>
+                  <TableCell sx={{ fontWeight: 700, fontSize: 18 }}>{beautifyKey(key)}</TableCell>
+                  <TableCell sx={{ fontWeight: 500, fontSize: 18 }}>{String(value)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+      {result.wellbeing_score !== undefined && renderScoreBar('Wellbeing Skoru', result.wellbeing_score)}
+    </Box>
+  );
+}
 
 function AnalysisPage({ title, description, onAnalyze }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -118,9 +215,7 @@ function AnalysisPage({ title, description, onAnalyze }) {
             <Typography variant="h6" gutterBottom>
               Analiz Sonuçları
             </Typography>
-            <pre style={{ whiteSpace: 'pre-wrap' }}>
-              {JSON.stringify(results, null, 2)}
-            </pre>
+            {renderResult(results)}
           </CardContent>
         </Card>
       )}

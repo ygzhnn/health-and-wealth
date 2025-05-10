@@ -12,22 +12,13 @@ import PersonalAnalysisPage from './Pages/PersonalAnalysisPage';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#6bb6ff',
-      light: '#e3f2fd',
-      dark: '#1976d2',
-      contrastText: '#fff',
+      main: '#2196f3',
     },
     secondary: {
-      main: '#b3c6e6',
-      contrastText: '#222',
+      main: '#f50057',
     },
     background: {
-      default: '#f6fbff',
-      paper: '#fafdff',
-    },
-    text: {
-      primary: '#23395d',
-      secondary: '#5c7fa3',
+      default: '#f5f5f5',
     },
   },
   typography: {
@@ -35,32 +26,10 @@ const theme = createTheme({
     h1: {
       fontSize: '2.5rem',
       fontWeight: 500,
-      color: '#23395d',
     },
     h2: {
       fontSize: '2rem',
       fontWeight: 500,
-      color: '#23395d',
-    },
-  },
-  components: {
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          background: '#fafdff',
-          boxShadow: '0 4px 24px 0 rgba(107,182,255,0.08)',
-          borderRadius: 16,
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-          textTransform: 'none',
-          fontWeight: 500,
-        },
-      },
     },
   },
 });

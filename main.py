@@ -2,12 +2,29 @@ from fastapi import FastAPI, File, UploadFile
 from PIL import Image
 import io
 import json
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 # Import your analysis functions
 # Make sure the paths are correct based on your project structure
 from model.indoor_analysis import analyze_indoor_space_with_gemini
 from model.outdoor_analysis import analyze_environment_with_gemini
 from model.facerecog import analyze_faces
+
+# Add CORS middleware
+origins = [
+    "http://localhost",      # Replace with your frontend URL(s) during development
+    "http://localhost:3000", # Example for a React app running on port 3000
+    # Add your production frontend URL(s) here
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app = FastAPI()
 

@@ -11,6 +11,9 @@ from model.indoor_analysis import analyze_indoor_space_with_gemini
 from model.outdoor_analysis import analyze_environment_with_gemini
 from model.facerecog import analyze_faces
 
+
+app = FastAPI()
+
 # Add CORS middleware
 origins = [
     "http://localhost",      # Replace with your frontend URL(s) during development
@@ -25,8 +28,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app = FastAPI()
 
 @app.post("/analyze/office/")
 async def analyze_office(file: UploadFile = File(...)):

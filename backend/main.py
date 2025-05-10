@@ -122,17 +122,31 @@ async def analyze_outdoor(file: UploadFile = File(...)):
     Evaluates factors like natural elements, air quality, and overall environmental wellbeing.
     """
     try:
+        print("Starting outdoor analysis...")
         # Read the image file
         image_data = await file.read()
         image = Image.open(io.BytesIO(image_data))
+        print("Image loaded successfully")
 
         # Call the outdoor analysis model
+        print("Calling Gemini API...")
         analysis_results_json = analyze_environment_with_gemini(image)
+        print(f"Raw API response: {analysis_results_json}")
+
+        if analysis_results_json is None:
+            print("Error: No response from Gemini API")
+            return {
+                "error": "No response from analysis model",
+                "analysis_results": None
+            }
 
         # Parse the JSON response using the parse_gemini_response function
+        print("Parsing response...")
         analysis_results = parse_gemini_response(analysis_results_json)
+        print(f"Parsed results: {analysis_results}")
         
         if analysis_results is None:
+            print("Error: Failed to parse analysis results")
             return {
                 "error": "Failed to parse analysis results",
                 "analysis_results": None
@@ -140,11 +154,13 @@ async def analyze_outdoor(file: UploadFile = File(...)):
 
         # Calculate wellbeing score if not present
         if "wellbeing_score" not in analysis_results:
+            print("Calculating wellbeing score...")
             scores = {k: v for k, v in analysis_results.items() 
                      if isinstance(v, (int, float)) and k not in ["wellbeing_score"]}
             analysis_results["wellbeing_score"] = calculate_outdoor_wellbeing_score(scores)
 
         # Ensure all required fields are present
+        print("Validating required fields...")
         required_fields = {
             "wellbeing_assessment": "Analysis of the outdoor environment's impact on wellbeing",
             "improvement_suggestions": ["Consider adding more green spaces", "Reduce traffic density"],
@@ -153,10 +169,15 @@ async def analyze_outdoor(file: UploadFile = File(...)):
 
         for field, default_value in required_fields.items():
             if field not in analysis_results or not analysis_results[field]:
+                print(f"Adding default value for missing field: {field}")
                 analysis_results[field] = default_value
 
+        print("Analysis complete, returning results")
         return analysis_results
     except Exception as e:
+        print(f"Error in outdoor analysis: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
         return {
             "error": f"Error in outdoor analysis: {str(e)}",
             "analysis_results": None

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function IndoorAnalysisPage() {
   const handleAnalyze = async (formData) => {
-    const response = await axios.post('http://localhost:8001/analyze/office/', formData, {
+    const response = await axios.post('http://localhost:8001/analyze/personal/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -13,9 +13,10 @@ function IndoorAnalysisPage() {
 
   return (
     <AnalysisPage
-      title="İç Alan Analizi"
-      description="Kapalı ortamlarda ruhsal etkileri değerlendirin. Bu analiz, ofis veya ev ortamınızın ruh halinize etkisini ölçer."
+      title="Indoor Space Analysis"
+      description="Evaluate the emotional impact of indoor environments. This analysis measures how your office or home environment affects your emotional well-being."
       onAnalyze={handleAnalyze}
+      isPersonalAnalysis={true}
     />
   );
 }

@@ -5,7 +5,7 @@ from PIL import Image
 from typing import Dict, List, Tuple, Union
 
 # Configure Gemini API
-GOOGLE_API_KEY = "YOUR_API_KEY"  # Replace with environment variable in production
+GOOGLE_API_KEY = "AIzaSyDSXdySoGPfQcxoD51vtFK2xxjhMMfczeY"
 genai.configure(api_key=GOOGLE_API_KEY)
 
 # Emotion to stress score mapping
@@ -134,3 +134,32 @@ def analyze_faces(image: Image.Image) -> str:
             "average_stress_score": 0,
             "stress_level": "Error"
         })
+
+def main():
+    """Main execution function."""
+    print("Face Analysis - Stress Level Detection")
+    print("=" * 50)
+
+    # Get image path from user
+    image_path = input("Enter the path to your image: ")
+    try:
+        image = Image.open(image_path)
+    except Exception as e:
+        print(f"Failed to load image: {str(e)}")
+        return
+
+    # Analyze faces
+    print("Analyzing faces with Gemini API...")
+    analysis_results = analyze_faces(image)
+    results = json.loads(analysis_results)
+
+    # Print results
+    print("\nAnalysis Results:")
+    print("-" * 30)
+    print("Raw Analysis:", results.get("raw_analysis", "No raw analysis available"))
+    print("\nDetected Emotions:", results.get("detected_emotions", []))
+    print("Average Stress Score:", results.get("average_stress_score", 0))
+    print("Stress Level:", results.get("stress_level", "Unknown"))
+
+if __name__ == "__main__":
+    main()

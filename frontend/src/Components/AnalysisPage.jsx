@@ -9,6 +9,7 @@ import {
   Alert,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import AnalysisResults from './AnalysisResults';
 
 function AnalysisPage({ title, description, onAnalyze }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -112,18 +113,7 @@ function AnalysisPage({ title, description, onAnalyze }) {
         </Alert>
       )}
 
-      {results && (
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Analiz Sonuçları
-            </Typography>
-            <pre style={{ whiteSpace: 'pre-wrap' }}>
-              {JSON.stringify(results, null, 2)}
-            </pre>
-          </CardContent>
-        </Card>
-      )}
+      {results && <AnalysisResults results={results} />}
     </Box>
   );
 }

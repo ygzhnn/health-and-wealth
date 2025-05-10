@@ -30,7 +30,7 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
 
   const handleAnalyze = async () => {
     if (!selectedFile) {
-      setError('Lütfen bir görsel seçin');
+      setError('Please select an image');
       return;
     }
 
@@ -43,7 +43,7 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
       const result = await onAnalyze(formData);
       setResults(result);
     } catch (err) {
-      setError('Analiz sırasında bir hata oluştu: ' + err.message);
+      setError('An error occurred during analysis: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,7 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
               component="label"
               startIcon={<CloudUploadIcon />}
             >
-              Görsel Seç
+              Select Image
               <input
                 type="file"
                 hidden
@@ -101,7 +101,7 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
               onClick={handleAnalyze}
               disabled={!selectedFile || loading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Analizi Başlat'}
+              {loading ? <CircularProgress size={24} /> : 'Start Analysis'}
             </Button>
           </Box>
         </CardContent>

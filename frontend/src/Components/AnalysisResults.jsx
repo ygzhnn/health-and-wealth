@@ -30,10 +30,10 @@ function AnalysisResults({ results, isPersonalAnalysis = false }) {
           <Card>
             <CardContent>
               <Typography variant="h5" gutterBottom>
-                Analiz Özeti
+                Analysis Summary
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                {results.wellbeing_assessment || 'Genel değerlendirme yapılıyor...'}
+                {results.wellbeing_assessment || 'Generating assessment...'}
               </Typography>
             </CardContent>
           </Card>
@@ -45,7 +45,7 @@ function AnalysisResults({ results, isPersonalAnalysis = false }) {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  Genel İyilik Hali Skoru
+                  Overall Wellbeing Score
                 </Typography>
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="h3" align="center" sx={{ color: getScoreColor(wellbeingScore) }}>
@@ -64,10 +64,10 @@ function AnalysisResults({ results, isPersonalAnalysis = false }) {
                     }}
                   />
                   <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="caption" color="text.secondary">Düşük</Typography>
-                    <Typography variant="caption" color="text.secondary">Orta</Typography>
-                    <Typography variant="caption" color="text.secondary">İyi</Typography>
-                    <Typography variant="caption" color="text.secondary">Mükemmel</Typography>
+                    <Typography variant="caption" color="text.secondary">Poor</Typography>
+                    <Typography variant="caption" color="text.secondary">Fair</Typography>
+                    <Typography variant="caption" color="text.secondary">Good</Typography>
+                    <Typography variant="caption" color="text.secondary">Excellent</Typography>
                   </Box>
                 </Box>
               </CardContent>
@@ -80,7 +80,7 @@ function AnalysisResults({ results, isPersonalAnalysis = false }) {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Detaylı Skorlar
+                Detailed Scores
               </Typography>
               <Box sx={{ mt: 2 }}>
                 {scores.map((score) => (
@@ -116,7 +116,7 @@ function AnalysisResults({ results, isPersonalAnalysis = false }) {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  Tespit Edilen Özellikler
+                  Detected Features
                 </Typography>
                 <Box component="ul" sx={{ pl: 2 }}>
                   {results.detected_features.map((feature, index) => (
@@ -136,7 +136,7 @@ function AnalysisResults({ results, isPersonalAnalysis = false }) {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  İyileştirme Önerileri
+                  Improvement Suggestions
                 </Typography>
                 <Box component="ul" sx={{ pl: 2 }}>
                   {results.improvement_suggestions.map((suggestion, index) => (

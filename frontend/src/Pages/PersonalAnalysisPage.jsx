@@ -13,8 +13,8 @@ function PersonalAnalysisPage() {
 
   return (
     <AnalysisPage
-      title="Kişisel Analiz"
-      description="Kişisel alanınızın ruh halinize etkisini ölçün. Bu analiz, kişisel yaşam alanınızın duygusal etkisini değerlendirir."
+      title="Personal Analysis"
+      description="Measure the impact of your personal space on your emotional well-being. This analysis evaluates the emotional effects of your personal living environment."
       onAnalyze={handleAnalyze}
       isPersonalAnalysis={true}
     />

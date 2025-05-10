@@ -43,8 +43,19 @@ def analyze_environment_with_gemini(image):
         "water_features": 0-100 score,
         "urbanization": 0-100 score,
         "detected_features": ["feature1", "feature2", ...],
-        "overall_assessment": "Brief evaluation of this area's environmental characteristics"
+        "wellbeing_assessment": "Brief evaluation of this area's impact on mental health and emotional wellbeing",
+        "improvement_suggestions": ["suggestion1", "suggestion2", ...],
+        "wellbeing_score": calculated overall score based on the factors above
     }
+
+    For the wellbeing_score, consider:
+    - Green space has positive impact (weight: 0.3)
+    - Water features have positive impact (weight: 0.2)
+    - Traffic has negative impact (weight: -0.2)
+    - Crowd has negative impact (weight: -0.15)
+    - Urbanization has mixed impact (weight: -0.15)
+
+    Calculate the wellbeing_score as a weighted average of these factors, normalized to 0-100.
 
     Return only the JSON output, without any additional commentary.
     """
@@ -117,16 +128,27 @@ def main():
 
         # Print scores
         env_scores = {k: v for k, v in env_results.items()
-                     if isinstance(v, (int, float)) and k not in ["detected_features", "overall_assessment"]}
+                     if isinstance(v, (int, float)) and k not in ["detected_features", "wellbeing_assessment", "improvement_suggestions", "wellbeing_score"]}
 
         print("\nFactor Scores (0-100):")
         for category, score in env_scores.items():
             print(f"{category.replace('_', ' ').title()}: {score}/100")
 
-        # Print overall assessment
-        if "overall_assessment" in env_results:
-            print("\nOverall Assessment:")
-            print(env_results["overall_assessment"])
+        # Print wellbeing assessment
+        if "wellbeing_assessment" in env_results:
+            print("\nWellbeing Assessment:")
+            print(env_results["wellbeing_assessment"])
+
+        # Print improvement suggestions
+        if "improvement_suggestions" in env_results:
+            print("\nImprovement Suggestions:")
+            for suggestion in env_results["improvement_suggestions"]:
+                print(f"- {suggestion}")
+
+        # Print wellbeing score
+        if "wellbeing_score" in env_results:
+            print("\nWellbeing Score:")
+            print(f"{env_results['wellbeing_score']}/100")
 
         # Save results
         print("\nSaving results in JSON format...")

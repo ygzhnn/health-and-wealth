@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function IndoorAnalysisPage() {
   const handleAnalyze = async (formData) => {
-    const response = await axios.post('http://localhost:8001/analyze/office/', formData, {
+    const response = await axios.post('http://localhost:8001/analyze/personal/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

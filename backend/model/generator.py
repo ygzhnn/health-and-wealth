@@ -42,16 +42,35 @@ class ReferenceImageGenerator:
                 )
             )
             
-            # Extract suggestions
-            suggestions = analysis_json.get('improvement_suggestions', [])
-            suggestion_text = "Please generate a reference image for a room with the following improvements:\n"
-            suggestion_text += '\n'.join(f"- {s}" for s in suggestions)
+            # Determine if this is child safety analysis based on the json content
+            is_child_safety = 'iyilestirme_onerileri' in analysis_json or 'tespit_edilen_tehlikeler' in analysis_json
             
-            prompt_text = (
-                "This is a photo of a real room. Based on the suggestions below, "
-                "create a new reference image that incorporates these improvements:\n"
-                f"{suggestion_text}"
-            )
+            # Extract suggestions
+            if is_child_safety:
+                suggestions = analysis_json.get('improvement_suggestions', []) or analysis_json.get('iyilestirme_onerileri', [])
+                hazards = analysis_json.get('detected_hazards', []) or analysis_json.get('tespit_edilen_tehlikeler', [])
+                
+                prompt_text = (
+                    "This is a photo of a real room. Create a safe environment design for children "
+                    "by addressing the following detected hazards:\n"
+                )
+                if hazards:
+                    prompt_text += '\n'.join(f"- {h}" for h in hazards) + "\n\n"
+                
+                prompt_text += "Apply the following safety recommendations to make the room safer:\n"
+                prompt_text += '\n'.join(f"- {s}" for s in suggestions)
+                
+                prompt_text += "\n\nPlease design a child-safe room/space and eliminate dangerous situations."
+            else:
+                suggestions = analysis_json.get('improvement_suggestions', [])
+                suggestion_text = "Please generate a reference image for a room with the following improvements:\n"
+                suggestion_text += '\n'.join(f"- {s}" for s in suggestions)
+                
+                prompt_text = (
+                    "This is a photo of a real room. Based on the suggestions below, "
+                    "create a new reference image that incorporates these improvements:\n"
+                    f"{suggestion_text}"
+                )
             
             # Create text part
             text_part = types.Part(text=prompt_text)
@@ -85,6 +104,92 @@ class ReferenceImageGenerator:
             print(f"Error generating reference image: {str(e)}")
             return {
                 "error": f"Error generating reference image: {str(e)}",
+                "success": False
+            }
+    
+    def generate_safety_design(self, image, analysis_json):
+        """
+        Generate a safety-focused reference image specifically for child safety.
+        
+        Args:
+            image (PIL.Image): The input image
+            analysis_json (dict): The analysis JSON containing safety hazards and recommendations
+            
+        Returns:
+            dict: Result containing image_base64, description, and success flag
+        """
+        try:
+            # Convert PIL image to bytes
+            img_byte_arr = BytesIO()
+            image.save(img_byte_arr, format='JPEG')
+            image_bytes = img_byte_arr.getvalue()
+            
+            # Create image part
+            image_part = types.Part(
+                inline_data=types.Blob(
+                    mime_type="image/jpeg",
+                    data=image_bytes
+                )
+            )
+            
+            # Extract safety-specific information
+            hazards = analysis_json.get('detected_hazards', []) or analysis_json.get('tespit_edilen_tehlikeler', [])
+            suggestions = analysis_json.get('improvement_suggestions', []) or analysis_json.get('iyilestirme_onerileri', [])
+            assessment = analysis_json.get('safety_assessment', '') or analysis_json.get('guvenlik_degerlendirmesi', '')
+            
+            # Create a comprehensive prompt for child safety design
+            prompt_text = (
+                "This is a photo of a real room. Transform this room into a safe environment for children.\n\n"
+                "Assessment: " + assessment + "\n\n"
+            )
+            
+            if hazards:
+                prompt_text += "Detected hazards:\n"
+                prompt_text += '\n'.join(f"- {h}" for h in hazards) + "\n\n"
+            
+            prompt_text += "Apply these safety improvements:\n"
+            prompt_text += '\n'.join(f"- {s}" for s in suggestions) + "\n\n"
+            
+            prompt_text += (
+                "Please transform this room into a completely safe environment for children. "
+                "Soften sharp corners, remove small and dangerous objects, "
+                "eliminate electrical hazards, place chemicals in locked cabinets, "
+                "remove fall hazards, and add fire safety measures. "
+                "The design should be both safe and aesthetically pleasing."
+            )
+            
+            # Create text part
+            text_part = types.Part(text=prompt_text)
+            
+            # Send request to Gemini with specific safety focus
+            response = self.client.models.generate_content(
+                model="gemini-2.0-flash-preview-image-generation",
+                contents=[types.Content(parts=[text_part, image_part])],
+                config=types.GenerateContentConfig(
+                    response_modalities=["TEXT", "IMAGE"]
+                )
+            )
+            
+            # Process the response
+            result = {
+                "description": "",
+                "image_base64": "",
+                "success": False
+            }
+            
+            for part in response.candidates[0].content.parts:
+                if hasattr(part, "text") and part.text:
+                    result["description"] = part.text
+                elif hasattr(part, "inline_data") and part.inline_data:
+                    result["image_base64"] = base64.b64encode(part.inline_data.data).decode('utf-8')
+                    result["success"] = True
+            
+            return result
+            
+        except Exception as e:
+            print(f"Error generating safety design: {str(e)}")
+            return {
+                "error": f"Error generating safety design: {str(e)}",
                 "success": False
             }
     

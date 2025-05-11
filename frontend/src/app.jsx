@@ -8,6 +8,7 @@ import HomePage from './Pages/HomePage';
 import IndoorAnalysisPage from './Pages/IndoorAnalysisPage';
 import OutdoorAnalysisPage from './Pages/OutdoorAnalysisPage';
 import PersonalAnalysisPage from './Pages/PersonalAnalysisPage';
+import ChildSafetyAnalysisPage from './Pages/ChildSafetyAnalysisPage';
 
 const theme = createTheme({
   palette: {
@@ -47,6 +48,7 @@ function App() {
               <Route path="/indoor" element={<IndoorAnalysisPage />} />
               <Route path="/outdoor" element={<OutdoorAnalysisPage />} />
               <Route path="/personal" element={<PersonalAnalysisPage />} />
+              <Route path="/child-safety" element={<ChildSafetyAnalysisPage />} />
             </Routes>
           </Container>
         </Box>

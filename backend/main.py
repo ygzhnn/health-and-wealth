@@ -11,6 +11,7 @@ from model.indoor_analysis import analyze_indoor_space_with_gemini
 from model.outdoor_analysis import analyze_environment_with_gemini, parse_gemini_response
 from model.facerecog import analyze_faces
 from model.generator import ReferenceImageGenerator
+from model.child_safety_analysis import analyze_child_safety_with_gemini, parse_gemini_response as parse_child_safety_response
 
 app = FastAPI()
 
@@ -269,6 +270,73 @@ async def generate_reference_from_analysis(
         return {
             "error": f"Error generating reference image: {str(e)}",
             "success": False
+        }
+
+@app.post("/generate/safety-design/")
+async def generate_safety_design(
+    file: UploadFile = File(...), 
+    analysis: str = File(...)
+):
+    """
+    Creates a safe environment design based on child safety analysis.
+    This special endpoint redesigns the room to address child safety hazards.
+    
+    Args:
+        file: Original room image
+        analysis: JSON string containing child safety analysis data
+    """
+    try:
+        # Read the image file
+        image_data = await file.read()
+        image = Image.open(io.BytesIO(image_data))
+        
+        # Parse the provided analysis JSON
+        analysis_results = json.loads(analysis)
+        
+        # Use the specialized safety design generator
+        reference_result = reference_generator.generate_safety_design(image, analysis_results)
+        
+        return reference_result
+    except Exception as e:
+        return {
+            "error": f"Error generating safe environment design: {str(e)}",
+            "success": False
+        }
+
+@app.post("/analyze/child-safety/")
+async def analyze_child_safety(file: UploadFile = File(...)):
+    """
+    Performs child safety analysis. Detects potentially dangerous elements 
+    for children in the room image and provides safety recommendations.
+    """
+    try:
+        # Read the image file
+        image_data = await file.read()
+        image = Image.open(io.BytesIO(image_data))
+        
+        # Call the child safety analysis model
+        analysis_results_json = analyze_child_safety_with_gemini(image)
+        
+        if analysis_results_json is None:
+            return {
+                "error": "No response received from Gemini API",
+                "analysis_results": None
+            }
+        
+        # Parse the response
+        analysis_results = parse_child_safety_response(analysis_results_json)
+        
+        if analysis_results is None:
+            return {
+                "error": "Failed to parse analysis results",
+                "analysis_results": None
+            }
+        
+        return analysis_results
+    except Exception as e:
+        return {
+            "error": f"Error in child safety analysis: {str(e)}",
+            "analysis_results": None
         }
 
 if __name__ == "__main__":

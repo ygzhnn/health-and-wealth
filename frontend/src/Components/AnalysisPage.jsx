@@ -11,7 +11,7 @@ import {
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AnalysisResults from './AnalysisResults';
 
-function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = false }) {
+function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = false, isChildSafetyAnalysis = false }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -84,7 +84,7 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
               component="label"
               startIcon={<CloudUploadIcon />}
             >
-              {isPersonalAnalysis ? 'Görüntü Seç' : 'Select Image'}
+              Select Image
               <input
                 type="file"
                 hidden
@@ -112,7 +112,7 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
               onClick={handleAnalyze}
               disabled={!selectedFile || loading}
             >
-              {loading ? <CircularProgress size={24} /> : isPersonalAnalysis ? 'Analizi Başlat' : 'Start Analysis'}
+              {loading ? <CircularProgress size={24} /> : 'Start Analysis'}
             </Button>
           </Box>
         </CardContent>
@@ -124,7 +124,7 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
         </Alert>
       )}
 
-      {results && <AnalysisResults results={results} isPersonalAnalysis={isPersonalAnalysis} />}
+      {results && <AnalysisResults results={results} isPersonalAnalysis={isPersonalAnalysis} isChildSafetyAnalysis={isChildSafetyAnalysis} />}
     </Box>
   );
 }

@@ -4,6 +4,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import BusinessIcon from '@mui/icons-material/Business';
 import ParkIcon from '@mui/icons-material/Park';
 import PersonIcon from '@mui/icons-material/Person';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
 
 function Navbar() {
   return (
@@ -48,6 +49,14 @@ function Navbar() {
             startIcon={<PersonIcon />}
           >
             Kişisel
+          </Button>
+          <Button
+            component={RouterLink}
+            to="/child-safety"
+            color="inherit"
+            startIcon={<ChildCareIcon />}
+          >
+            Çocuk Güvenliği
           </Button>
         </Box>
       </Toolbar>

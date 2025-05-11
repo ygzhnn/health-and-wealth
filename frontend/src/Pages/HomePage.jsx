@@ -3,6 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import BusinessIcon from '@mui/icons-material/Business';
 import ParkIcon from '@mui/icons-material/Park';
 import PersonIcon from '@mui/icons-material/Person';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
 
 function HomePage() {
   const analysisOptions = [
@@ -23,6 +24,12 @@ function HomePage() {
       description: 'Kişisel alanınızın ruh halinize etkisini ölçün.',
       icon: <PersonIcon sx={{ fontSize: 40 }} />,
       path: '/personal',
+    },
+    {
+      title: 'Çocuk Güvenliği Analizi',
+      description: 'Odanızın çocuklar için güvenliğini değerlendirin.',
+      icon: <ChildCareIcon sx={{ fontSize: 40 }} />,
+      path: '/child-safety',
     },
   ];
 

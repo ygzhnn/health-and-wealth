@@ -1,6 +1,13 @@
-import { Box, Card, CardContent, Typography, Grid, LinearProgress } from '@mui/material';
+import { useState } from 'react';
+import { Box, Card, CardContent, Typography, Grid, LinearProgress, Button, CircularProgress } from '@mui/material';
+import axios from 'axios';
 
 function AnalysisResults({ results, isPersonalAnalysis = false }) {
+  const [generatingImage, setGeneratingImage] = useState(false);
+  const [generatedImage, setGeneratedImage] = useState(null);
+  const [imageDescription, setImageDescription] = useState('');
+  const [imageError, setImageError] = useState(null);
+
   if (!results) return null;
 
   // Extract scores for display
@@ -20,6 +27,50 @@ function AnalysisResults({ results, isPersonalAnalysis = false }) {
     if (score >= 70) return '#06D6A0'; // Good
     if (score >= 40) return '#FFD166'; // Fair
     return '#FF6B6B'; // Poor
+  };
+
+  // Function to generate reference image
+  const handleGenerateImage = async () => {
+    setGeneratingImage(true);
+    setImageError(null);
+
+    try {
+      // Create form data with the analysis results
+      const formData = new FormData();
+      formData.append('analysis', JSON.stringify(results));
+      
+      // Use the last uploaded image from localStorage if available
+      const lastImageData = localStorage.getItem('lastUploadedImage');
+      if (lastImageData) {
+        // Convert base64 to blob
+        const response = await fetch(lastImageData);
+        const blob = await response.blob();
+        formData.append('file', blob, 'image.jpg');
+      } else {
+        setImageError('No image available for reference');
+        setGeneratingImage(false);
+        return;
+      }
+
+      // Call the API to generate reference image
+      const response = await axios.post('http://localhost:8001/generate/reference-from-analysis/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // Check if the image generation was successful
+      if (response.data.success) {
+        setGeneratedImage(`data:image/png;base64,${response.data.image_base64}`);
+        setImageDescription(response.data.description || 'Generated reference image');
+      } else {
+        setImageError(response.data.error || 'Failed to generate image');
+      }
+    } catch (err) {
+      setImageError(`Error generating image: ${err.message}`);
+    } finally {
+      setGeneratingImage(false);
+    }
   };
 
   return (
@@ -145,8 +196,79 @@ function AnalysisResults({ results, isPersonalAnalysis = false }) {
                     </Typography>
                   ))}
                 </Box>
+                
+                {/* Generate Reference Image Button - Only for personal analysis */}
+                {isPersonalAnalysis && (
+                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+                    <Button 
+                      variant="contained" 
+                      color="primary"
+                      onClick={handleGenerateImage}
+                      disabled={generatingImage}
+                      sx={{ mt: 2 }}
+                    >
+                      {generatingImage ? (
+                        <>
+                          <CircularProgress size={24} sx={{ mr: 1 }} />
+                          Referans Görüntü Oluşturuluyor...
+                        </>
+                      ) : 'Referans Görüntü Oluştur'}
+                    </Button>
+                  </Box>
+                )}
               </CardContent>
             </Card>
+          </Grid>
+        )}
+        
+        {/* Generated Reference Image - Only show when available */}
+        {isPersonalAnalysis && generatedImage && (
+          <Grid item xs={12}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Referans Görüntü
+                </Typography>
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  {imageDescription}
+                </Typography>
+                <Box 
+                  sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'center',
+                    mt: 2 
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={generatedImage}
+                    alt="Referans Oda Tasarımı"
+                    sx={{
+                      maxWidth: '100%',
+                      maxHeight: 500,
+                      objectFit: 'contain',
+                      borderRadius: 1,
+                    }}
+                  />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        )}
+        
+        {/* Error message for image generation */}
+        {imageError && (
+          <Grid item xs={12}>
+            <Box 
+              sx={{ 
+                bgcolor: '#FFF0F0', 
+                color: '#D32F2F', 
+                p: 2, 
+                borderRadius: 1 
+              }}
+            >
+              <Typography>{imageError}</Typography>
+            </Box>
           </Grid>
         )}
       </Grid>

@@ -22,7 +22,18 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreview(URL.createObjectURL(file));
+      
+      // Create preview and store in localStorage for reference image generation
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
+      
+      // Store image in localStorage for reference image generation
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        localStorage.setItem('lastUploadedImage', e.target.result);
+      };
+      reader.readAsDataURL(file);
+      
       setError(null);
       setResults(null);
     }
@@ -73,7 +84,7 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
               component="label"
               startIcon={<CloudUploadIcon />}
             >
-              Select Image
+              {isPersonalAnalysis ? 'Görüntü Seç' : 'Select Image'}
               <input
                 type="file"
                 hidden
@@ -101,7 +112,7 @@ function AnalysisPage({ title, description, onAnalyze, isPersonalAnalysis = fals
               onClick={handleAnalyze}
               disabled={!selectedFile || loading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Start Analysis'}
+              {loading ? <CircularProgress size={24} /> : isPersonalAnalysis ? 'Analizi Başlat' : 'Start Analysis'}
             </Button>
           </Box>
         </CardContent>

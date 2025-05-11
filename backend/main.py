@@ -10,9 +10,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from model.indoor_analysis import analyze_indoor_space_with_gemini
 from model.outdoor_analysis import analyze_environment_with_gemini, parse_gemini_response
 from model.facerecog import analyze_faces
-
+from model.generator import ReferenceImageGenerator
 
 app = FastAPI()
+
+# Initialize the reference image generator
+reference_generator = ReferenceImageGenerator()
 
 # Add CORS middleware
 origins = [
@@ -211,6 +214,62 @@ def calculate_outdoor_wellbeing_score(scores):
     wellbeing_score = max(0, min(100, round(wellbeing_score, 1)))
 
     return wellbeing_score
+
+@app.post("/generate/reference-image/")
+async def generate_reference(file: UploadFile = File(...)):
+    """
+    Generate a reference image based on the original image
+    and improvement suggestions from indoor analysis.
+    """
+    try:
+        # Read the image file
+        image_data = await file.read()
+        image = Image.open(io.BytesIO(image_data))
+        
+        # First, analyze the image to get improvement suggestions
+        analysis_results_json = analyze_indoor_space_with_gemini(image)
+        analysis_results = json.loads(analysis_results_json)
+        
+        # Generate reference image based on analysis
+        reference_result = reference_generator.generate_from_image_and_analysis(image, analysis_results)
+        
+        return reference_result
+    except Exception as e:
+        return {
+            "error": f"Error generating reference image: {str(e)}",
+            "success": False
+        }
+
+@app.post("/generate/reference-from-analysis/")
+async def generate_reference_from_analysis(
+    file: UploadFile = File(...), 
+    analysis: str = File(...)
+):
+    """
+    Generate a reference image using an image and pre-existing analysis data.
+    This avoids analyzing the image twice if analysis was already done.
+    
+    Args:
+        file: The original image file
+        analysis: JSON string containing analysis data with improvement suggestions
+    """
+    try:
+        # Read the image file
+        image_data = await file.read()
+        image = Image.open(io.BytesIO(image_data))
+        
+        # Parse the provided analysis JSON
+        analysis_results = json.loads(analysis)
+        
+        # Generate reference image based on analysis
+        reference_result = reference_generator.generate_from_image_and_analysis(image, analysis_results)
+        
+        return reference_result
+    except Exception as e:
+        return {
+            "error": f"Error generating reference image: {str(e)}",
+            "success": False
+        }
 
 if __name__ == "__main__":
     import uvicorn
